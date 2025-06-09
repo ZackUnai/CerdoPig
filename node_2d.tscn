@@ -1,6 +1,43 @@
-[gd_scene load_steps=2 format=3 uid="uid://bt8fmlgvbpshx"]
+[gd_scene load_steps=5 format=3 uid="uid://bt8fmlgvbpshx"]
 
 [ext_resource type="Script" uid="uid://dpwntdg6tda3s" path="res://node_2d.gd" id="1_wtcfe"]
+[ext_resource type="PackedScene" uid="uid://bgyit0xvht04h" path="res://Nona/cuticula.tscn" id="2_epypp"]
+[ext_resource type="Texture2D" uid="uid://dm35uupbbcoe3" path="res://Nona/EhB.png" id="3_0hol4"]
 
-[node name="Node2D" type="Node2D"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_q6r6c"]
+radius = 14.0
+height = 62.0
+
+[node name="MainEscene" type="Node2D"]
 script = ExtResource("1_wtcfe")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -7.0
+offset_top = -34.0
+offset_right = 939.0
+offset_bottom = 342.0
+scale = Vector2(1.22351, 1.72263)
+color = Color(0.798809, 0.744031, 0.90506, 1)
+metadata/_edit_group_ = true
+
+[node name="CharacterBody2D" parent="." instance=ExtResource("2_epypp")]
+position = Vector2(509, 265)
+
+[node name="CharacterBody2D2" type="CharacterBody2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D2"]
+modulate = Color(0.6815, 1, 0.09, 1)
+position = Vector2(578, 266)
+texture = ExtResource("3_0hol4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D2"]
+position = Vector2(578, 267)
+shape = SubResource("CapsuleShape2D_q6r6c")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 493.0
+offset_top = 191.0
+offset_right = 594.0
+offset_bottom = 240.0
+text = "N E GGA TIVE
+"
