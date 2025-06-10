@@ -1,92 +1,78 @@
 extends CharacterBody2D
 
-@export var spd = 150
+@export var spd := 150
+@export var attack_cooldown := 0.5
 
-
-
+var last_dir := "D"
+var is_attacking := false
+var attack_timer := 0.0
 
 func _ready():
-	
 	$AnimBXN.play("Idle")
-	
 
 func _process(delta):
-	pass
-	
-	var movent : Vector2 = Vector2.ZERO
-	
-	# Movimiento
-	
-	if Input.is_action_pressed("R_MOVE"):
-		
-		movent.x += 1
-		
-		if Input.is_action_just_pressed("ATACK"):
-			pass
-	
+	var mov = handle_movement(delta)
+	handle_attack()
+	update_attack_timer(delta)
+	update_animation(mov)
+
+	if Input.is_key_pressed(KEY_Q):
+		queue_free()
+
+# ----------------------------
+# Movimiento (ahora siempre permitido)
+# ----------------------------
+func handle_movement(delta):
+	var mov = Vector2.ZERO
+
 	if Input.is_action_pressed("L_MOVE"):
-		
-		movent.x -= 1
-		
-		if Input.is_action_just_pressed("ATACK"):
-			pass
-	
-	if Input.is_action_pressed("D_MOVE"):
-		
-		movent.y += 1
-		
-		if Input.is_action_just_pressed("ATACK"):
-			pass
-	
+		mov.x -= 1
+	if Input.is_action_pressed("R_MOVE"):
+		mov.x += 1
 	if Input.is_action_pressed("U_MOVE"):
-		
-		movent.y -= 1
-		
-		if Input.is_action_just_pressed("ATACK"):
-			pass
-	
-	velocity.x = movent.x * spd
-	velocity.y = movent.y * spd
-	
-	move_and_slide()
-	
-	
-	
-	# Animaciones
-	if $AnimBXN:
-		if Input.is_action_pressed("L_MOVE"):
-			
-			$AnimBXN.play("L_Move")
-			
-			if Input.is_action_just_pressed("ATACK"):
-				
-				$AnimBXN.play("L_Atack")
-		
-		if Input.is_action_pressed("R_MOVE"):
-		
-			$AnimBXN.play("R_Move")
-			
-			if Input.is_action_just_pressed("ATACK"):
-				
-				$AnimBXN.play("R_Atack")
-		
-		if Input.is_action_pressed("U_MOVE"):
-			
-			$AnimBXN.play("U_Move")
-			
-			if Input.is_action_just_pressed("ATACK"):
-				
-				$AnimBXN.play("U_Atack")
-		
-		if Input.is_action_pressed("D_MOVE"):
-			
-			$AnimBXN.play("D_Move")
-			
-			if Input.is_action_just_pressed("ATACK"):
-				
-				$AnimBXN.play("D_Atack")
-	
+		mov.y -= 1
+	if Input.is_action_pressed("D_MOVE"):
+		mov.y += 1
+
+	mov = mov.normalized()
+	velocity = mov * spd
+	move_and_slide()  # movimiento siempre permitido
+
+	# Solo actualiza dirección si no está atacando
+	if mov != Vector2.ZERO and not is_attacking:
+		if abs(mov.x) > abs(mov.y):
+			last_dir = "R" if mov.x > 0 else "L"
+		else:
+			last_dir = "D" if mov.y > 0 else "U"
+
+	return mov
+
+# ----------------------------
+# Ataque
+# ----------------------------
+func handle_attack():
+	if Input.is_action_just_pressed("ATACK") and not is_attacking:
+		is_attacking = true
+		attack_timer = attack_cooldown
+		$AnimBXN.play(last_dir + "_Atack")
+
+# ----------------------------
+# Timer de ataque
+# ----------------------------
+func update_attack_timer(delta):
+	if is_attacking:
+		attack_timer -= delta
+		if attack_timer <= 0.0:
+			is_attacking = false
+
+# ----------------------------
+# Animaciones
+# ----------------------------
+func update_animation(mov):
+	if is_attacking:
+		return  # no reproducimos otra animación si está atacando
+
+	if mov != Vector2.ZERO:
+		$AnimBXN.play(last_dir + "_Move")
 	else:
-		$AnimBXN.stop(false)
 		$AnimBXN.play("Idle")
-	
