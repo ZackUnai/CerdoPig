@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cda4ws13uoq87"]
+
+[ext_resource type="Script" uid="uid://dwqvmi85nkc1n" path="res://Code/nodo_crucial.gd" id="1_yllco"]
+
+[node name="NodoCrucial" type="Node"]
+script = ExtResource("1_yllco")
